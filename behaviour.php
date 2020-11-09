@@ -21,10 +21,9 @@ class qbehaviour_interactive_for_digitalliteracy extends qbehaviour_interactive 
 
         if (!$this->is_complete_response($pendingstep)) {
             $pendingstep->set_state(question_state::$invalid);
-
         } else {
             $triesleft = $this->qa->get_last_behaviour_var('_triesleft');
-            list($fraction, $state) = $this->grade_response($pendingstep);
+            list($fraction, $state) = $this->grade_response($pendingstep, false);
             if ($state == question_state::$gradedright || $triesleft == 1) {
                 $pendingstep->set_state($state);
                 $pendingstep->set_fraction($this->adjust_fraction($fraction, $pendingstep));
@@ -39,8 +38,8 @@ class qbehaviour_interactive_for_digitalliteracy extends qbehaviour_interactive 
     }
 
     // Grade the submission and cache the results (question_file_saver object) in the pending step
-    protected function grade_response(question_attempt_pending_step $pendingstep) {
-        $response = $pendingstep->get_qt_data();
+    protected function grade_response(question_attempt_pending_step $pendingstep, $finish) {
+        $response = $finish ? $this->qa->get_last_qt_data() : $pendingstep->get_qt_data();
         $gradedata = $this->question->grade_response($response);
         list($fraction, $state) = $gradedata;
         if (count($gradedata) > 2) {
@@ -61,7 +60,7 @@ class qbehaviour_interactive_for_digitalliteracy extends qbehaviour_interactive 
             $pendingstep->set_state(question_state::$gaveup);
 
         } else {
-            list($fraction, $state) = $this->grade_response($pendingstep);
+            list($fraction, $state) = $this->grade_response($pendingstep, true);
             $pendingstep->set_fraction($this->adjust_fraction($fraction, $pendingstep));
             $pendingstep->set_state($state);
         }
