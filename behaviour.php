@@ -7,7 +7,7 @@ require_once($CFG->dirroot . '/question/behaviour/interactive/behaviour.php');
 class qbehaviour_interactive_for_digitalliteracy extends qbehaviour_interactive {
 
     public function is_compatible_question(question_definition $question) {
-        return $question instanceof qtype_digitalliteracy_question;
+        return $question instanceof qtype_digitalliteracy_question || $question instanceof qtype_compareoffice_question;
     }
 
     public function can_finish_during_attempt() {
